@@ -7,7 +7,6 @@ def load_data_from_file(file_name):
 
     return data
 
-
 def test_stop_times():
     assert load_data_from_file('../json_data_async.json')['15']['stops']['to']['Вокзал']['week'][0] == '5:55', 'First stop time test'
     
