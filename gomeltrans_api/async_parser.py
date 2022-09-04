@@ -116,9 +116,12 @@ def write_json(result):
 
 
 def main():
+    print('Start parse')
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    all_routes = asyncio.run(parse_all_routes('trolleybus'))
-    write_json(all_routes)
+    all_bus_routes = asyncio.run(parse_all_routes('bus'))
+    write_json(all_bus_routes)
+    all_trolleybus_routes = asyncio.run(parse_all_routes('trolleybus'))
+    write_json(all_trolleybus_routes)
 
 if __name__ == '__main__':
     main()

@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework'
+    'django_q',
 
-    'api.apps.Apiconfig'
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -73,16 +73,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gomeltrans_api.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
@@ -125,3 +122,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+Q_CLUSTER = {
+   'orm': 'default'
+}
+
+
+TRANSPORT_TYPES = ['bus', 'trolleybus']
