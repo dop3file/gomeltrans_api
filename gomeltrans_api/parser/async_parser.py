@@ -110,8 +110,8 @@ async def parse_all_routes(type_transport: str) -> dict:
     return final_routes
 
             
-def write_json(result):
-    with open('json_data_async.json', 'w', encoding='utf-8') as outfile:
+def write_json(result, file_name):
+    with open(f'../{file_name}.json', 'w', encoding='utf-8') as outfile:
         json.dump(result, outfile, ensure_ascii=False, indent=4)
 
 
@@ -119,9 +119,10 @@ def main():
     print('Start parse')
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     all_bus_routes = asyncio.run(parse_all_routes('bus'))
-    write_json(all_bus_routes)
+    write_json(all_bus_routes, 'bus')
     all_trolleybus_routes = asyncio.run(parse_all_routes('trolleybus'))
-    write_json(all_trolleybus_routes)
+    write_json(all_trolleybus_routes, 'trolleybus')
+    print('End parse')
 
 if __name__ == '__main__':
     main()
