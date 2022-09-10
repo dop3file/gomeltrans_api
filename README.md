@@ -1,5 +1,5 @@
 # gomeltrans_api
-**API** для получения информации о **гомельском общественном транспорте**
+**JSON API** для получения информации о **гомельском общественном транспорте**
 
 *Источник - https://gomeltrans.net/*
 
@@ -66,6 +66,7 @@ number - номер транспорта
  - **django**
  - **django-q**
 
+# Попробовать - https://gomeltrans.pythonanywhere.com/bus/route/1/
 
 
 
