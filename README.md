@@ -15,7 +15,7 @@
 
 number - номер транспорта
 
-**\<str:type_transport\>/route/\<str:number\>** - получение информации(откуда,куда,остановки) о конкретном маршруте
+**route/\<str:type_transport\>/\<str:number\>** - получение информации(откуда,куда,остановки) о конкретном маршруте
 
 Пример возвращаемого значения:
 ```
@@ -64,7 +64,7 @@ number - номер транспорта
 }
 ```
 
-**\<str:type_transport\>/route/name_all** - получения номеров всех маршрутов 
+**route/\<str:type_transport\>/name_all** - получения номеров всех маршрутов 
 
 # Requirements
  - **BeautifulSoup4**
