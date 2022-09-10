@@ -8,13 +8,13 @@ def load_data_from_file(file_name):
     return data
 
 def test_stop_times():
-    assert load_data_from_file('../json_data_async.json')['15']['stops']['to']['Вокзал']['week'][0] == '5:55', 'First stop time test'
+    assert load_data_from_file('../gomeltrans_api/bus.json')['15']['stops']['to']['Вокзал']['week'][0] == '5:55', 'First stop time test'
     
 def test_stop_times():
-    assert load_data_from_file('../json_data_async.json')['20']['stops']['to']['БелГУТ']['weekend'][5] == '9:58', 'Second stop time test'
+    assert load_data_from_file('../gomeltrans_api/bus.json')['20']['stops']['to']['БелГУТ']['weekend'][5] == '9:58', 'Second stop time test'
 
 def test_stop_times():
-    assert load_data_from_file('../json_data_async.json')['43']['stops']['to']['Большевик']['week'][14] == '14:49', 'Third stop time test'
+    assert load_data_from_file('../gomeltrans_api/bus.json')['43']['stops']['to']['Большевик']['week'][14] == '14:49', 'Third stop time test'
 
 
     

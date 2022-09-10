@@ -1,6 +1,9 @@
+import encodings
+from inspect import Attribute
 import json
 import time
 import asyncio
+from zoneinfo import available_timezones
 import aiohttp
 
 from bs4 import BeautifulSoup
@@ -84,6 +87,26 @@ async def parse_all_routes(type_transport: str) -> dict:
                 route = route.find('a', href=True)
                 route_link = route.get('href')
 
+                async with session.get(url=BASE_URL + route_link, headers=HEADERS) as response_route:
+                    soup = BeautifulSoup(await response_route.text(), 'lxml')
+                    required_route_info = soup.find_all(class_='route-info-block-content big-1')
+                    additional_route_info = {
+                        'mode': [
+                            soup.find(class_='route-info-block-content big-1 day-off'), 
+                            soup.find(class_='route-info-block-content big-1 green'),
+                            soup.find(class_='route-info-block-content big-1 week-day')
+                        ],
+                        'tariff_price': required_route_info[0].text.replace('\xa0', ''),
+                        'route_length': float(required_route_info[1].text.replace('\xa0', '').replace(',', '.').replace('км','')) if len(required_route_info) < 4 else float(required_route_info[2].text.replace('\xa0', '').replace(',', '.').replace('км','')),
+                        'count_stops': int(required_route_info[-1].text.replace('\xa0', ''))                        
+                    }
+                
+                    additional_route_info['mode'] = [mode.text for mode in additional_route_info['mode'] if mode][0]
+                    try:
+                        additional_route_info['similar_routes'] = [element.text.split(' ')[0] for element in soup.find(class_='routes-list-little routes-list little-2').find_all('div')]
+                    except AttributeError:
+                        pass
+
                 number_route: str = route.text.split(' ')[0]
                 route = route.text[len(number_route) + 1:].replace('\xa0—', ' -').replace('\xa0→', ' -')
 
@@ -96,7 +119,8 @@ async def parse_all_routes(type_transport: str) -> dict:
 
                 final_routes[number_route] = {
                     'from': from_, 
-                    'to': to
+                    'to': to,
+                    **additional_route_info
                     }
                 all_route_numbers.append(number_route)
                 task = asyncio.create_task(parse_route(session, BASE_URL + route_link))
@@ -117,12 +141,14 @@ def write_json(result, file_name):
 
 def main():
     print('Start parse')
+    before = time.time()
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     all_bus_routes = asyncio.run(parse_all_routes('bus'))
     write_json(all_bus_routes, 'bus')
     all_trolleybus_routes = asyncio.run(parse_all_routes('trolleybus'))
     write_json(all_trolleybus_routes, 'trolleybus')
     print('End parse')
+    print(time.time() - before)
 
 if __name__ == '__main__':
     main()
