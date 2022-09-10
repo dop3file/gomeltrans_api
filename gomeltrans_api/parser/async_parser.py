@@ -86,7 +86,8 @@ async def parse_all_routes(type_transport: str) -> dict:
             for route in routes.find_all('div'):
                 route = route.find('a', href=True)
                 route_link = route.get('href')
-
+                
+                # парсинг дополнительных параметров
                 async with session.get(url=BASE_URL + route_link, headers=HEADERS) as response_route:
                     soup = BeautifulSoup(await response_route.text(), 'lxml')
                     required_route_info = soup.find_all(class_='route-info-block-content big-1')
