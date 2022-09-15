@@ -1,9 +1,8 @@
-import json
-
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 
 from .utils import load_data_from_json
+from .misc import _get_route_with_stops
 
 
 def get_route(request, type_transport: str, number: str):
@@ -25,3 +24,14 @@ def get_all_name_routes(request, type_transport: str):
     response = {'response': data, 'status_code': 200}
 
     return JsonResponse(response, safe=True)
+
+
+def get_route_with_stops(request):
+    stop_from = request.GET.get('from', '')
+    stop_to = request.GET.get('to', '')
+
+    data = _get_route_with_stops(stop_from, stop_to, True)
+    response = {'response': data, 'status_code': 200}
+
+    return JsonResponse(response, safe=True)
+    
