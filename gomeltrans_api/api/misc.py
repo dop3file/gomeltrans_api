@@ -7,12 +7,30 @@ def is_weekday():
     return datetime.now().weekday() < 5
 
 
-def sort_nearest_routes(routes: list[dict]):
-    #TODO
-    pass
+def _sort_nearest_routes(routes: list[dict], stop_from: str):
+    '''
+    Функция сортирует маршруты по времени прибытия к остановке с которой надо уехать
+    routes - массив маршрутов
+    stop_from - остановка, с которой надо уехать
+    '''
+    stop_times = []
+    for index, route in enumerate(routes):
+        stop_times.append([{index: datetime.strptime(stop_time, '%H:%M')} for stop_time in load_data_from_json(route['transport_type'])[route['number']]['stops'][route['side']][stop_from]['week' if is_weekday() else 'weekend']])
+
+    nearest_stop = min(stop_times, key = lambda d: datetime.now().strftime("%H:%M")[0])[0]
+
+    return {
+        "route_info": routes[list(nearest_stop.keys())[0]],
+        "stop_time": list(nearest_stop.values())[0].strftime("%H:%M")
+    }
 
 
 def _get_route_from_stops(stop_from: str, stop_to: str) -> dict:
+    '''
+    Функция возвращает все маршруты включающие stop_from и stop_to
+    stop_from - остановка, с которой надо уехать
+    stop_to - остановка, на которую надо прибыть
+    '''
     all_transports_info: dict[dict] = {
         'bus': load_data_from_json('bus'), 
         'trolleybus': load_data_from_json('trolleybus')
@@ -33,3 +51,4 @@ def _get_route_from_stops(stop_from: str, stop_to: str) -> dict:
             elif all([info['stops']['back'].get(stop) for stop in (stop_from, stop_to)]) and get_stop_index('back', stop_to) > get_stop_index('back', stop_from):
                 add_route('back')
     
+    return suitable_routes

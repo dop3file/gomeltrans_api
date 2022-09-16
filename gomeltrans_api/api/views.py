@@ -2,7 +2,7 @@ from django.conf import settings
 from django.http import JsonResponse
 
 from .utils import load_data_from_json
-from .misc import _get_route_from_stops
+from .misc import _get_route_from_stops, _sort_nearest_routes
 
 
 def get_route(request, type_transport: str, number: str):
@@ -30,7 +30,7 @@ def get_route_from_stops(request):
     stop_from = request.GET.get('from', '')
     stop_to = request.GET.get('to', '')
 
-    data = _get_route_from_stops(stop_from, stop_to)
+    data = _sort_nearest_routes(_get_route_from_stops(stop_from, stop_to), stop_from)
     response = {'response': data, 'status_code': 200}
 
     return JsonResponse(response, safe=True)
