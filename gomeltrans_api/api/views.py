@@ -41,7 +41,7 @@ def get_nearest_route(reqeust):
     stop_to = reqeust.GET.get('to', '')
 
     data = _sort_nearest_routes(_get_route_from_stops(stop_from, stop_to), stop_from)
-    response = {'response': data, 'status_code': 200}
+    response = {'response': data, 'status_code': 200 if data else 404}
 
     return JsonResponse(response, safe=True)
     
