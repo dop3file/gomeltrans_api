@@ -70,7 +70,7 @@ number - номер транспорта
 
 **route/routes_from_stops/?from=STOP&to=STOP** - получить все маршруты от остановки до остановки
 
-**route/nearest_route/?from=STOP&to=STOP** - получить ближайший маршрут от остановки до остановки
+**route/nearest_route/?from=STOP** - получить ближайший маршрут от остановки до остановки
 
 # Requirements
  - **BeautifulSoup4**
