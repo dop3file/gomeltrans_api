@@ -30,6 +30,16 @@ def get_route_from_stops(request):
     stop_from = request.GET.get('from', '')
     stop_to = request.GET.get('to', '')
 
+    data = _get_route_from_stops(stop_from, stop_to)
+    response = {'response': data, 'status_code': 200}
+
+    return JsonResponse(response, safe=True)
+
+
+def get_nearest_route(reqeust):
+    stop_from = reqeust.GET.get('from', '')
+    stop_to = reqeust.GET.get('to', '')
+
     data = _sort_nearest_routes(_get_route_from_stops(stop_from, stop_to), stop_from)
     response = {'response': data, 'status_code': 200}
 
