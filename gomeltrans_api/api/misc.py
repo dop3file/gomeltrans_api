@@ -1,11 +1,14 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from time import time
 
 from .utils import load_data_from_json
 
 
-def is_weekday():
-    return datetime.now().weekday() < 5
+TIME_NOW = datetime.now() + timedelta(hours=9)
 
+
+def is_weekday():
+    return TIME_NOW.weekday() < 5
 
 def _sort_nearest_routes(routes: list[dict], stop_from: str):
     '''
@@ -15,13 +18,18 @@ def _sort_nearest_routes(routes: list[dict], stop_from: str):
     '''
     try:
         stop_times = []
+
         for index, route in enumerate(routes):
-            stop_times.extend([[index, datetime.strptime(stop_time, '%H:%M')] for stop_time in load_data_from_json(route['transport_type'])[route['number']]['stops'][route['side']][stop_from]['week' if is_weekday() else 'weekend']])
-        nearest_stop = sorted(stop_times[len(stop_times) // 2::], key=lambda d: d[1] - datetime.now())
+            stop_times.extend([[index, datetime(year=TIME_NOW.year, month=TIME_NOW.month, day=TIME_NOW.day, hour=int(stop_time.split(':')[0]), minute=int(stop_time.split(':')[1]))] for stop_time in load_data_from_json(route['transport_type'])[route['number']]['stops'][route['side']][stop_from]['week' if is_weekday() else 'weekend']])
+
+        nearest_route = [stop_time for stop_time in stop_times if (stop_time[1] - TIME_NOW).total_seconds() > 0]
+        print(TIME_NOW)
         return {
-            "route_info": routes[nearest_stop[0][0]],
-            "stop_time": nearest_stop[0][1].strftime("%H:%M")
-        }
+                "route_info": routes[nearest_route[0][0]],
+                "stop_time": nearest_route[0][1].strftime("%H:%M")
+                }
+
+        
     except IndexError:
         return None
 
