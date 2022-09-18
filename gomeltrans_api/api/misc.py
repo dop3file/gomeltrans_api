@@ -16,9 +16,7 @@ def _sort_nearest_routes(routes: list[dict], stop_from: str):
     stop_times = []
     for index, route in enumerate(routes):
         stop_times.extend([[index, datetime.strptime(stop_time, '%H:%M')] for stop_time in load_data_from_json(route['transport_type'])[route['number']]['stops'][route['side']][stop_from]['week' if is_weekday() else 'weekend']])
-    #print(stop_times)
-    dt = datetime(1900, 1, 1, datetime.now().hour, datetime.now().minute)
-    nearest_stop = sorted(stop_times[len(stop_times) // 2::], key = lambda d: d[1] - dt)
+    nearest_stop = sorted(stop_times[len(stop_times) // 2::], key=lambda d: d[1] - datetime.now())
     return {
         "route_info": routes[nearest_stop[0][0]],
         "stop_time": nearest_stop[0][1].strftime("%H:%M")
