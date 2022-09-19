@@ -4,11 +4,11 @@ from time import time
 from .utils import load_data_from_json
 
 
-TIME_NOW = datetime.now() + timedelta(hours=9)
+TIME_NOW = lambda: datetime.now()
 
 
 def is_weekday():
-    return TIME_NOW.weekday() < 5
+    return TIME_NOW().weekday() < 5
 
 def _sort_nearest_routes(routes: list[dict], stop_from: str):
     '''
@@ -20,16 +20,17 @@ def _sort_nearest_routes(routes: list[dict], stop_from: str):
         stop_times = []
 
         for index, route in enumerate(routes):
-            stop_times.extend([[index, datetime(year=TIME_NOW.year, month=TIME_NOW.month, day=TIME_NOW.day, hour=int(stop_time.split(':')[0]), minute=int(stop_time.split(':')[1]))] for stop_time in load_data_from_json(route['transport_type'])[route['number']]['stops'][route['side']][stop_from]['week' if is_weekday() else 'weekend']])
+            stop_times.extend([[index, datetime(year=TIME_NOW().year, month=TIME_NOW().month, day=TIME_NOW().day, hour=int(stop_time.split(':')[0]), minute=int(stop_time.split(':')[1]))] for stop_time in load_data_from_json(route['transport_type'])[route['number']]['stops'][route['side']][stop_from]['week' if is_weekday() else 'weekend']])
 
-        nearest_route = [stop_time for stop_time in stop_times if (stop_time[1] - TIME_NOW).total_seconds() > 0]
-        print(TIME_NOW)
+        nearest_route = [stop_time for stop_time in stop_times if (stop_time[1] - TIME_NOW()).total_seconds() > 0]
+        print(TIME_NOW())
         return {
                 "route_info": routes[nearest_route[0][0]],
-                "stop_time": nearest_route[0][1].strftime("%H:%M")
+                "stop_time": nearest_route[0][1].strftime("%H:%M"),
+                "local_time": TIME_NOW()
                 }
 
-        
+
     except IndexError:
         return None
 
@@ -41,8 +42,8 @@ def _get_route_from_stops(stop_from: str, stop_to: str) -> dict:
     stop_to - остановка, на которую надо прибыть
     '''
     all_transports_info: dict[dict] = {
-        'bus': load_data_from_json('bus'), 
-        'trolleybus': load_data_from_json('trolleybus')
+        'trolleybus': load_data_from_json('trolleybus'),
+        'bus': load_data_from_json('bus')
     }
 
     suitable_routes: list[dict] = []
@@ -59,5 +60,5 @@ def _get_route_from_stops(stop_from: str, stop_to: str) -> dict:
                 add_route('to')
             elif all([info['stops']['back'].get(stop) for stop in (stop_from, stop_to)]) and get_stop_index('back', stop_to) > get_stop_index('back', stop_from):
                 add_route('back')
-    
+
     return suitable_routes
