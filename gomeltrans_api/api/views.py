@@ -44,10 +44,11 @@ def get_nearest_route(reqeust):
     stop_from = reqeust.GET.get('from', '')
     stop_to = reqeust.GET.get('to', '')
 
-    bus_nearest_route = _sort_nearest_routes(_get_route_from_stops('bus', stop_from, stop_to), stop_from)
-    trolleybus_nearest_route = _sort_nearest_routes(_get_route_from_stops('trolleybus', stop_from, stop_to), stop_from)
+    get_nearest_route = lambda type_transport: _sort_nearest_routes(_get_route_from_stops(type_transport, stop_from, stop_to), stop_from)
+
+    bus_nearest_route = get_nearest_route('bus')
+    trolleybus_nearest_route = get_nearest_route('trolleybus')
     
-    print(bus_nearest_route, trolleybus_nearest_route)
 
     nearest_route = bus_nearest_route if bus_nearest_route and trolleybus_nearest_route and datetime.strptime(bus_nearest_route.get('stop_time'), "%H:%M") < datetime.strptime(trolleybus_nearest_route.get('stop_time'), "%H:%M") else trolleybus_nearest_route if trolleybus_nearest_route else bus_nearest_route if bus_nearest_route else None
 
