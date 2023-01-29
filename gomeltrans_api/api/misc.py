@@ -7,10 +7,10 @@ from .utils import load_data_from_json
 TIME_NOW = lambda: datetime.now()
 
 
-def is_weekday():
+def _is_weekday():
     return TIME_NOW().weekday() < 5
 
-def _sort_nearest_routes(routes: list[dict], stop_from: str):
+def sort_nearest_routes(routes: list[dict], stop_from: str):
     '''
     Функция сортирует маршруты по времени прибытия к остановке с которой надо уехать
     routes - массив маршрутов
@@ -20,7 +20,7 @@ def _sort_nearest_routes(routes: list[dict], stop_from: str):
         stop_times = []
         #print(routes)
         for index, route in enumerate(routes):
-            stop_times.extend([[index, datetime(year=TIME_NOW().year, month=TIME_NOW().month, day=TIME_NOW().day, hour=int(stop_time.split(':')[0]), minute=int(stop_time.split(':')[1]))] for stop_time in load_data_from_json(route['transport_type'])[route['number']]['stops'][route['side']][stop_from]['week' if is_weekday() else 'weekend']])
+            stop_times.extend([[index, datetime(year=TIME_NOW().year, month=TIME_NOW().month, day=TIME_NOW().day, hour=int(stop_time.split(':')[0]), minute=int(stop_time.split(':')[1]))] for stop_time in load_data_from_json(route['transport_type'])[route['number']]['stops'][route['side']][stop_from]['week' if _is_weekday() else 'weekend']])
 
         nearest_route = [stop_time for stop_time in stop_times if (stop_time[1] - TIME_NOW()).total_seconds() > 0]
 
@@ -35,7 +35,7 @@ def _sort_nearest_routes(routes: list[dict], stop_from: str):
         return None
 
 
-def _get_route_from_stops(transport_type: str, stop_from: str, stop_to: str) -> dict:
+def get_route_from_stops(transport_type: str, stop_from: str, stop_to: str) -> dict:
     '''
     Функция возвращает все маршруты включающие stop_from и stop_to
     stop_from - остановка, с которой надо уехать

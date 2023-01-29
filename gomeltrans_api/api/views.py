@@ -2,7 +2,7 @@ from django.conf import settings
 from django.http import JsonResponse
 
 from .utils import load_data_from_json
-from .misc import _get_route_from_stops, _sort_nearest_routes
+from .misc import get_route_from_stops, sort_nearest_routes
 
 from datetime import datetime
 import functools
@@ -33,7 +33,7 @@ def get_route_from_stops(request):
     stop_from = request.GET.get('from', '')
     stop_to = request.GET.get('to', '')
 
-    routes = functools.reduce(lambda a, b: a + b, [_get_route_from_stops(transport_type, stop_from, stop_to) for transport_type in settings.TRANSPORT_TYPES])
+    routes = functools.reduce(lambda a, b: a + b, [get_route_from_stops(transport_type, stop_from, stop_to) for transport_type in settings.TRANSPORT_TYPES])
 
     response = {'response': routes, 'status_code': 200 if routes else 404}
 
@@ -44,7 +44,7 @@ def get_nearest_route(reqeust):
     stop_from = reqeust.GET.get('from', '')
     stop_to = reqeust.GET.get('to', '')
 
-    get_nearest_route = lambda type_transport: _sort_nearest_routes(_get_route_from_stops(type_transport, stop_from, stop_to), stop_from)
+    get_nearest_route = lambda type_transport: sort_nearest_routes(get_route_from_stops(type_transport, stop_from, stop_to), stop_from)
 
     bus_nearest_route = get_nearest_route('bus')
     trolleybus_nearest_route = get_nearest_route('trolleybus')
